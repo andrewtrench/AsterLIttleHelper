@@ -1,0 +1,187 @@
+/* Custom styles for Flask Task Scheduler */
+
+/* Global styles */
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Card styles */
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+/* Task list styles */
+.progress {
+    height: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* Fun color accents */
+.bg-primary {
+    background-color: #4e73df !important;
+}
+
+.bg-success {
+    background-color: #1cc88a !important;
+}
+
+.bg-info {
+    background-color: #36b9cc !important;
+}
+
+.bg-warning {
+    background-color: #f6c23e !important;
+}
+
+.bg-danger {
+    background-color: #e74a3b !important;
+}
+
+.text-primary {
+    color: #4e73df !important;
+}
+
+.text-success {
+    color: #1cc88a !important;
+}
+
+.text-info {
+    color: #36b9cc !important;
+}
+
+.text-warning {
+    color: #f6c23e !important;
+}
+
+.text-danger {
+    color: #e74a3b !important;
+}
+
+/* Button styles */
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+}
+
+.btn-success {
+    background-color: #1cc88a;
+    border-color: #1cc88a;
+}
+
+.btn-success:hover {
+    background-color: #17a673;
+    border-color: #169b6b;
+}
+
+/* Animation effects */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+/* Badge styles */
+.badge {
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+}
+
+/* Footer styles */
+.footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e3e6f0;
+}
+
+/* Task status indicators */
+.task-status-pending {
+    border-left: 5px solid #f6c23e;
+}
+
+.task-status-completed {
+    border-left: 5px solid #1cc88a;
+}
+
+/* Schedule day cards */
+.today-card {
+    border: 2px solid #4e73df !important;
+    box-shadow: 0 0.15rem 0.5rem rgba(78, 115, 223, 0.2) !important;
+}
+
+.weekend-day {
+    background-color: #f8f9fa;
+}
+
+/* Tips section styling */
+.list-group-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 0.5rem;
+}
+
+/* Table styling */
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e3e6f0;
+    font-weight: 600;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+    .card-header h4 {
+        font-size: 1.2rem;
+    }
+
+    .display-1 {
+        font-size: 4rem;
+    }
+}
+
+/* Login progress form styling */
+.hours-select {
+    font-size: 1.1rem;
+    padding: 0.5rem;
+}
+
+/* Motivational quotes */
+.quote-box {
+    background-color: #f0f7ff;
+    border-left: 4px solid #4e73df;
+    padding: 1rem;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+}
+
+/* Round corners on buttons and inputs */
+.btn, .form-control, .form-select {
+    border-radius: 0.5rem;
+}
+
+/* Custom switch for status toggle */
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+}
+
+/* Extra flash message styling */
+.alert-dismissible {
+    border-radius: 0.5rem;
+}/* Custom styles */

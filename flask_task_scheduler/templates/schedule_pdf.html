@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Schedule - Flask Task Scheduler</title>
+</head>
+<body>
+    <div class="header">
+        <h1>Study Schedule</h1>
+        <p>Generated on {{ dates[0].strftime('%A, %B %d, %Y') }}</p>
+    </div>
+
+    <div class="schedule-container">
+        {% for date in dates %}
+            {% set day_name = date.strftime('%A') %}
+            {% set day_tasks = schedule[date] %}
+            {% set is_weekend = day_name in ['Saturday', 'Sunday'] %}
+            {% set is_today = date == dates[0] %}
+
+            <div class="day-card">
+                <div class="day-header {% if is_today %}today{% endif %}">
+                    <h3>
+                        {% if is_today %}Today - {% endif %}
+                        {{ date.strftime('%A, %B %d, %Y') }}
+                    </h3>
+                </div>
+                <div class="day-body">
+                    {% if day_tasks %}
+                        {% for task_info in day_tasks %}
+                            {% if task_info.hours > 0 %}
+                                <div class="task-item">
+                                    <div class="task-title"><strong>{{ task_info.title }}</strong></div>
+                                    <div class="task-hours">{{ task_info.hours }} hours</div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% set total_hours = day_tasks|sum(attribute='hours') %}
+                        <div class="total-hours">
+                            Total: <strong>{{ total_hours }} hours</strong>
+                            {% if total_hours > 4 %}
+                                <span class="warning"> (Heavy workload)</span>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <p>No tasks scheduled for this day.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="tips">
+        <h3>Study Tips</h3>
+        <ul>
+            <li><strong>Follow the Pomodoro Technique:</strong> Study for 25 minutes, then take a 5-minute break.</li>
+            <li><strong>Stay Hydrated:</strong> Keep water nearby during study sessions.</li>
+            <li><strong>Minimize Distractions:</strong> Put your phone on silent mode while studying.</li>
+            <li><strong>Active Learning:</strong> Take notes, create summaries, and quiz yourself.</li>
+        </ul>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Due Date</th>
+                <th>Hours Completed</th>
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task_id, task in tasks.items() %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.due_date }}</td>
+                <td>{{ task.hours_completed }} hours</td>
+                <td>{{ task.estimated_hours }} hours</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>TaskScheduler - Keep Your Studies on Track</p>
+    </div>
+</body>
+</html>

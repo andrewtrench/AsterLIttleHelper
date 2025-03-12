@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Log Progress - {{ task.title }} - Flask Task Scheduler{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="my-0 fw-normal">
+                    <i class="fas fa-clock me-2"></i>Log Progress for "{{ task.title }}"
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5>Task Details</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Status:</strong> 
+                                <span class="badge {% if task.status == 'completed' %}bg-success{% else %}bg-warning{% endif %}">
+                                    {{ task.status|capitalize }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Estimated Hours:</strong> {{ task.estimated_hours }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Hours Completed:</strong> {{ task.hours_completed }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-3">
+                        {% set progress = (task.hours_completed / task.estimated_hours * 100)|int if task.estimated_hours > 0 else 0 %}
+                        <div class="progress-bar {% if progress < 25 %}bg-danger{% elif progress < 75 %}bg-warning{% else %}bg-success{% endif %}" 
+                             role="progressbar" 
+                             style="width: {{ progress }}%"
+                             aria-valuenow="{{ progress }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ progress }}%
+                        </div>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="log_date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="log_date" name="log_date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="hours" class="form-label">Hours Spent <span class="text-danger">*</span></label>
+                            <select class="form-select" id="hours" name="hours" required>
+                                <option value="">Select hours</option>
+                                <option value="0.5">0.5 hours (30 minutes)</option>
+                                <option value="1.0">1.0 hour</option>
+                                <option value="1.5">1.5 hours</option>
+                                <option value="2.0">2.0 hours</option>
+                                <option value="2.5">2.5 hours</option>
+                                <option value="3.0">3.0 hours</option>
+                                <option value="3.5">3.5 hours</option>
+                                <option value="4.0">4.0 hours</option>
+                                <option value="4.5">4.5 hours</option>
+                                <option value="5.0">5.0 hours</option>
+                            </select>
+                            <div class="form-text">How many hours did you spend on this task?</div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Log Progress
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        {% if logs %}
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>Previous Logs
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ log.log_date }}</td>
+                                <td>{{ log.hours }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-active">
+                                <th>Total</th>
+                                <th>{{ logs|sum(attribute='hours') }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>Productivity Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <div class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">Track Accurately</h5>
+                        <p class="mb-1">Log your progress as soon as you finish working to ensure accuracy.</p>
+                    </div>
+                    <div class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">Be Realistic</h5>
+                        <p class="mb-1">Don't overestimate your work hours - honest tracking helps with future planning.</p>
+                    </div>
+                    <div class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">Stay Consistent</h5>
+                        <p class="mb-1">Regular, shorter study sessions are often more effective than cramming.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Set default date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('log_date');
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        dateInput.value = `${yyyy}-${mm}-${dd}`;
+    });
+</script>
+{% endblock %}

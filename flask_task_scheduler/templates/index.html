@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Flask Task Scheduler{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="my-0 fw-normal">
+                    <i class="fas fa-clipboard-list me-2"></i>My Tasks
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if tasks %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Due Date</th>
+                                    <th>Progress</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in tasks %}
+                                    <tr class="{% if task.status == 'completed' %}table-success{% elif (task.due_date|string) < (today|string) %}table-danger{% endif %}"">
+                                        <td>
+                                            {{ task.title }}
+                                            {% if task.status == 'completed' %}
+                                                <span class="badge bg-success ms-2">Completed</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ task.due_date }}</td>
+                                        <td>
+                                            {% set progress = (task.hours_completed / task.estimated_hours * 100)|int if task.estimated_hours > 0 else 0 %}
+                                            <div class="progress">
+                                                <div class="progress-bar {% if progress < 25 %}bg-danger{% elif progress < 75 %}bg-warning{% else %}bg-success{% endif %}"
+                                                     role="progressbar"
+                                                     style="width: {{ progress }}%"
+                                                     aria-valuenow="{{ progress }}"
+                                                     aria-valuemin="0"
+                                                     aria-valuemax="100">
+                                                    {{ progress }}%
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">{{ task.hours_completed }} / {{ task.estimated_hours }} hours</small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('log_progress', task_id=task.id) }}" class="btn btn-outline-primary">
+                                                    <i class="fas fa-clock"></i> Log
+                                                </a>
+                                                <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-outline-secondary">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger delete-btn"
+                                                        data-task-id="{{ task.id }}"
+                                                        data-task-title="{{ task.title }}">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>You don't have any tasks yet. <a href="{{ url_for('create_task') }}" class="alert-link">Create a new task</a> to get started!
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('create_task') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add New Task
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="my-0 fw-normal">
+                    <i class="fas fa-calendar-day me-2"></i>Today's Schedule
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if today_schedule %}
+                    <ul class="list-group">
+                        {% for task_info in today_schedule %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ task_info.title }}</strong>
+                                    <div class="text-muted">{{ task_info.hours }} hours</div>
+                                </div>
+                                <a href="{{ url_for('log_progress', task_id=task_info.task_id) }}" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-check me-1"></i>Log Progress
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    {% set total_hours = today_schedule|sum(attribute='hours') %}
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-1"></i>Total planned hours today: <strong>{{ total_hours }}</strong>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success mb-0">
+                        <i class="fas fa-check-circle me-2"></i>No tasks scheduled for today. Enjoy your free time!
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('schedule') }}" class="btn btn-success">
+                    <i class="fas fa-calendar-alt me-1"></i>View Full Schedule
+                </a>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4 class="my-0 fw-normal">
+                    <i class="fas fa-lightbulb me-2"></i>Quick Tips
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Schedule Daily</h5>
+                            <small><i class="fas fa-clock"></i></small>
+                        </div>
+                        <p class="mb-1">Log your progress daily to keep track of your study habits.</p>
+                    </div>
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Stay Focused</h5>
+                            <small><i class="fas fa-bullseye"></i></small>
+                        </div>
+                        <p class="mb-1">Work on one task at a time for better productivity.</p>
+                    </div>
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Take Breaks</h5>
+                            <small><i class="fas fa-coffee"></i></small>
+                        </div>
+                        <p class="mb-1">Remember to take 5-minute breaks every 25 minutes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Global Delete Confirmation Modal -->
+<div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete "<span id="deleteTaskTitle"></span>"? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteTaskForm" method="post">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
